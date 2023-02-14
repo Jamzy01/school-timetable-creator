@@ -7,6 +7,19 @@ mod timetable_data;
 
 #[tokio::main]
 async fn main() {
-    let resp = timetable_data::timetable_request::get_timetable_data(USER_ID, START_YEAR, END_YEAR).await;
-    println!("{:#?}", resp);
+    let timetable =
+        timetable_data::timetable_request::get_timetable_data(USER_ID, START_YEAR, END_YEAR).await;
+    println!("{:#?}", timetable);
+
+    let mut class_count = 0;
+
+    for event in timetable.iter() {
+        if event.title.starts_with("Class -") {
+            class_count += 1;
+        }
+    }
+
+    println!("Class Count: {}", class_count);
+
+    println!("Timetable Length: {}", timetable.len());
 }
