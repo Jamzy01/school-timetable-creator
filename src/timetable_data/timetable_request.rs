@@ -1,7 +1,8 @@
-use super::TimetableEvent;
+use super::{Timetable, TimetableEvent};
 use chrono::{DateTime, FixedOffset};
+use uuid::Uuid;
 
-const USER_COOKIE: &str = "_ga=GA1.1.222620736.1675298841; _ga_Y2LZ2LSJHM=GS1.1.1676408136.10.1.1676408139.0.0.0; _ga_J34MZBT82M=GS1.1.1676425627.24.1.1676425639.0.0.0; PHPSESSID=p4726ktsu3d86m50mho1qj29e5";
+const USER_COOKIE: &str = "_ga=GA1.1.779699113.1674549025; _ga_Y2LZ2LSJHM=GS1.1.1674549024.1.0.1674549026.0.0.0; _ga_J34MZBT82M=GS1.1.1676369257.1.1.1676371428.0.0.0; PHPSESSID=qbii2sq5odfapgbgdmfgnh6i6q";
 
 // Get Cookie By Opening Timetable Request URI In Browser When Logged Into Account on myGrammar, Then Use DevTools To Find The Cookie Header In The Request From The Network Tab
 
@@ -31,11 +32,7 @@ pub async fn get_raw_timetable_data(user_id: i32, start_year: i32, end_year: i32
     }
 }
 
-pub async fn get_timetable_data(
-    user_id: i32,
-    start_year: i32,
-    end_year: i32,
-) -> Vec<TimetableEvent> {
+pub async fn get_timetable_data(user_id: i32, start_year: i32, end_year: i32) -> Timetable {
     let mut timetable_events: Vec<TimetableEvent> = Vec::new();
 
     let raw_timetable_data = get_raw_timetable_data(user_id, start_year, end_year).await;
@@ -139,12 +136,35 @@ pub async fn get_timetable_data(
                                     continue; // Skip event
                                 }
 
+                                // Get Description
+
+                                let mut description: String = String::from("No Description");
+
+                                if event_title.starts_with("Class - ") {
+                                    description = String::from(format!(
+                                        "Class Info: {}",
+                                        timetable_title_data
+                                    ));
+                                }
+
+                                // Get Notification
+
+                                let mut notification: Option<i64> = None;
+
+                                if event_title.starts_with("Class - ") {
+                                    notification = Some(-10);
+                                }
+
                                 timetable_events.push(TimetableEvent::new(
+                                    sha256::digest(event_title.to_string()),
+                                    Uuid::new_v4().hyphenated().to_string(),
                                     event_title,
                                     event_start_time.unwrap().timestamp(),
                                     event_end_time.unwrap().timestamp(),
                                     event_all_day,
                                     String::from(event_color),
+                                    notification,
+                                    description,
                                 ))
                             }
                             None => (),
@@ -159,5 +179,5 @@ pub async fn get_timetable_data(
         }
     }
 
-    timetable_events
+    Timetable::new(timetable_events)
 }

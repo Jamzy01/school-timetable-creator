@@ -5,19 +5,21 @@ const USER_ID: i32 = 620;
 mod time_util;
 mod timetable_data;
 
-use crate::timetable_data::csv_calendar_serializer::serialize_events;
-
+use chrono::NaiveDateTime;
 use native_dialog::FileDialog;
 
 #[tokio::main]
 async fn main() {
-    let timetable =
+    let mut timetable =
         timetable_data::timetable_request::get_timetable_data(USER_ID, START_YEAR, END_YEAR).await;
+
+    timetable.merge_events_within_range(300);
+
     println!("{:#?}", timetable);
 
     let mut class_count = 0;
 
-    for event in timetable.iter() {
+    for event in timetable.events.iter() {
         if event.title.starts_with("Class -") {
             class_count += 1;
         }
@@ -25,7 +27,7 @@ async fn main() {
 
     println!("Class Count: {}", class_count);
 
-    println!("Timetable Length: {}", timetable.len());
+    println!("Timetable Length: {}", timetable.events.len());
 
     let calendar_save_file_dialog = FileDialog::new()
         .set_location("~/Desktop")
@@ -34,9 +36,7 @@ async fn main() {
         .unwrap();
 
     match calendar_save_file_dialog {
-        Some(calendar_save_file_dialog) => {
-            serialize_events(timetable, calendar_save_file_dialog)
-        },
-        None => panic!("Unable to save csv calendar file")
+        Some(calendar_save_file_dialog) => timetable.serialize_events(calendar_save_file_dialog),
+        None => panic!("Unable to save csv calendar file"),
     }
 }
