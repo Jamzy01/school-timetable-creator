@@ -1,7 +1,7 @@
 use super::TimetableEvent;
 use chrono::{DateTime, FixedOffset};
 
-const USER_COOKIE: &str = "_ga=GA1.1.779699113.1674549025; _ga_Y2LZ2LSJHM=GS1.1.1674549024.1.0.1674549026.0.0.0; PHPSESSID=l2ne1s54aqdtsjds99ljbldpd7; _ga_J34MZBT82M=GS1.1.1676369257.1.1.1676369308.0.0.0";
+const USER_COOKIE: &str = "_ga=GA1.1.222620736.1675298841; _ga_Y2LZ2LSJHM=GS1.1.1676408136.10.1.1676408139.0.0.0; _ga_J34MZBT82M=GS1.1.1676425627.24.1.1676425639.0.0.0; PHPSESSID=p4726ktsu3d86m50mho1qj29e5";
 
 // Get Cookie By Opening Timetable Request URI In Browser When Logged Into Account on myGrammar, Then Use DevTools To Find The Cookie Header In The Request From The Network Tab
 
