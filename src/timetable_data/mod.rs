@@ -156,11 +156,6 @@ impl Timetable {
                     Some(found_event_within_range) => {
                         event.end = found_event_within_range.end; // Extend event to merge
 
-                        event.end = 3232;
-                        event.start = 3232;
-
-                        println!("Found Range: {}", event.title);
-
                         merged_event_id = Some(found_event_within_range.internal_id.to_string());
 
                         break;
@@ -171,7 +166,9 @@ impl Timetable {
 
             match merged_event_id {
                 Some(merged_event_id) => {
-                    self.events = cloned_events
+                    self.events = self
+                        .events
+                        .clone()
                         .into_iter()
                         .filter(|event| event.internal_id != merged_event_id)
                         .collect::<Vec<TimetableEvent>>();

@@ -2,7 +2,10 @@ use super::{Timetable, TimetableEvent};
 use chrono::{DateTime, FixedOffset};
 use uuid::Uuid;
 
-const USER_COOKIE: &str = "_ga=GA1.1.779699113.1674549025; _ga_Y2LZ2LSJHM=GS1.1.1674549024.1.0.1674549026.0.0.0; _ga_J34MZBT82M=GS1.1.1676369257.1.1.1676371428.0.0.0; PHPSESSID=qbii2sq5odfapgbgdmfgnh6i6q";
+const USER_COOKIE: &str = "_ga=GA1.1.779699113.1674549025; _ga_Y2LZ2LSJHM=GS1.1.1674549024.1.0.1674549026.0.0.0; _ga_J34MZBT82M=GS1.1.1676453583.3.0.1676453583.0.0.0; PHPSESSID=jr0e4vdssli4vdm5ova6b996s4";
+
+const INCLUDE_CLASSES: bool = false;
+const INCLUDE_EVENTS: bool = true;
 
 // Get Cookie By Opening Timetable Request URI In Browser When Logged Into Account on myGrammar, Then Use DevTools To Find The Cookie Header In The Request From The Network Tab
 
@@ -155,17 +158,21 @@ pub async fn get_timetable_data(user_id: i32, start_year: i32, end_year: i32) ->
                                     notification = Some(-10);
                                 }
 
-                                timetable_events.push(TimetableEvent::new(
-                                    sha256::digest(event_title.to_string()),
-                                    Uuid::new_v4().hyphenated().to_string(),
-                                    event_title,
-                                    event_start_time.unwrap().timestamp(),
-                                    event_end_time.unwrap().timestamp(),
-                                    event_all_day,
-                                    String::from(event_color),
-                                    notification,
-                                    description,
-                                ))
+                                if (!event_title.starts_with("School Event - ") || INCLUDE_EVENTS)
+                                    && (!event_title.starts_with("Class - ") || INCLUDE_CLASSES)
+                                {
+                                    timetable_events.push(TimetableEvent::new(
+                                        sha256::digest(event_title.to_string()),
+                                        Uuid::new_v4().hyphenated().to_string(),
+                                        event_title,
+                                        event_start_time.unwrap().timestamp(),
+                                        event_end_time.unwrap().timestamp(),
+                                        event_all_day,
+                                        String::from(event_color),
+                                        notification,
+                                        description,
+                                    ))
+                                }
                             }
                             None => (),
                         }
