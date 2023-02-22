@@ -2,7 +2,7 @@ use super::{Timetable, TimetableEvent};
 use chrono::{DateTime, FixedOffset};
 use uuid::Uuid;
 
-const USER_COOKIE: &str = "_ga=GA1.1.779699113.1674549025; _ga_Y2LZ2LSJHM=GS1.1.1674549024.1.0.1674549026.0.0.0; _ga_J34MZBT82M=GS1.1.1676453583.3.0.1676453583.0.0.0; PHPSESSID=jr0e4vdssli4vdm5ova6b996s4";
+const USER_COOKIE: &str = "";
 
 const INCLUDE_CLASSES: bool = false;
 const INCLUDE_EVENTS: bool = true;
